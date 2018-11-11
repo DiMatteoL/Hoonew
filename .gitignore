@@ -1,0 +1,59 @@
+*.class
+
+# Package Files #
+*.jar
+*.war
+*.ear
+
+# Eclipse #
+.settings
+.project
+.classpath
+.studio
+target
+
+# Apple #
+.DS_Store
+
+# Intellij #
+.idea
+*.iws
+*.iml
+*.ipr
+
+### STS ###
+.apt_generated
+.classpath
+.factorypath
+.project
+.settings
+.springBeans
+.sts4-cache
+
+# logback
+logback.out.xml
+
+server/src/main/resources/public/
+server/target
+client/dist/
+client/node/
+client/node_modules/
+client/npm-debug.log
+client/target
+client/test-output
+client/tests/e2e/reports
+client/tests/unit/coverage
+client/yarn-error.log
+client/yarn.lock
+security/target/
+selenium-debug.log
+
+### NetBeans ###
+/nbproject/private/
+/build/
+/nbbuild/
+/dist/
+/nbdist/
+/.nb-gradle/
+
+!.mvn/wrapper/maven-wrapper.jar
