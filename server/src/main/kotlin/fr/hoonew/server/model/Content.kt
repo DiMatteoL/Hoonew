@@ -5,8 +5,12 @@ import javax.persistence.*
 
 @Entity
 @Table(name = "content")
-class Content : TemporalModel() {
-    @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
-    private val id: Long? = null
-}
+data class Content (
+    @Id @GeneratedValue(strategy=GenerationType.IDENTITY)
+    val id: Long? = null,
+    @ManyToOne
+    var creator: Creator? = null,
+    var name: String? = null,
+    var url: String? = null,
+    var category : String? = null
+) : TemporalModel()
