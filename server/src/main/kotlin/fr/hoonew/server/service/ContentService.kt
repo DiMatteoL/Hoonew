@@ -22,11 +22,12 @@ class ContentService {
     private lateinit var creatorRepository : CreatorRepository
 
     @Transactional(readOnly = true)
-    fun getContent(id: Long) : ContentDto =
-        contentRepository.findById(id)
+    fun getContent(id: Long) : ContentDto {
+        return contentRepository.findById(id)
             .map { ContentDtoConverter.convert(it) }
             .orElse(null)
             ?: throw NotFoundException("Content id: $id doesn't exist")
+    }
 
     @Transactional(readOnly = true)
     fun getContents(pagination: PaginationDto): PageDto<ContentDto> {

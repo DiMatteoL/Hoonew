@@ -1,97 +1,56 @@
 package fr.hoonew.server.controller
 
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
-import com.nhaarman.mockitokotlin2.any
-import com.nhaarman.mockitokotlin2.verify
-import com.nhaarman.mockitokotlin2.whenever
-import fr.hoonew.server.model.Content
-import fr.hoonew.server.model.Creator
-import fr.hoonew.server.repository.ContentRepository
-import fr.hoonew.server.repository.CreatorRepository
 import fr.hoonew.server.service.ContentService
 import fr.hoonew.server.service.dto.ContentDto
-import org.junit.Assert.assertEquals
-import org.springframework.test.context.junit4.SpringRunner
-import java.util.Optional
-import javax.ws.rs.BadRequestException
-import javax.ws.rs.NotFoundException
+import fr.hoonew.server.service.dto.common.PageDto
+import fr.hoonew.server.service.dto.common.PaginationDto
+import org.junit.Before
+import org.junit.Test
+import org.mockito.InjectMocks
+import org.mockito.Mock
+import org.mockito.Mockito
+import org.mockito.MockitoAnnotations
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest
+import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter
+import org.springframework.test.web.servlet.MockMvc
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers
+import org.springframework.test.web.servlet.setup.MockMvcBuilders
 
-/**
- * Content service test class.
- */
-@RunWith(SpringRunner::class)
-class ContentServiceTest {
+@WebMvcTest(ContentController::class)
+class ContentControllerTest {
 
-    @Mock
-    private lateinit var creatorRepository: CreatorRepository
-    @Mock
-    private lateinit var contentRepository: ContentRepository
+    private lateinit var mockMvc: MockMvc
+
     @InjectMocks
+    private lateinit var contentController: ContentController
+    @Mock
     private lateinit var contentService: ContentService
 
-    @Test
-    fun testGetContent() {
-        /* Given */
-        val contentId = 1L
-        whenever(contentRepository.findById(contentId)).thenReturn(Optional.of(Content(id = contentId)))
+    @Before
+    fun setup() {
+        MockitoAnnotations.initMocks(this)
 
-        /* When */
-        val result = contentService.getContent(contentId)
-
-        /* Then */
-        assertEquals(contentId, result.id)
-    }
-
-    @Test(expected = NotFoundException::class)
-    fun testGetContentWhenContentIsNotFound() {
-        /* Given */
-        val contentId = 2L
-        whenever(contentRepository.findById(contentId)).thenReturn(Optional.empty())
-
-        /* When */
-        contentService.getContent(contentId)
-    }
-
-    @Test(expected = BadRequestException::class)
-    fun createWithoutAuthor() {
-        /* Given */
-        val contentId = 2L
-        val creatorId = 5L
-        whenever(contentRepository.save(any<Content>())).thenReturn(Content(id = contentId))
-        whenever(creatorRepository.findById(creatorId)).thenReturn(Optional.empty())
-
-        contentService.createContent(ContentDto(creatorId = creatorId))
+        mockMvc = MockMvcBuilders.standaloneSetup(contentController).setMessageConverters(
+            MappingJackson2HttpMessageConverter()
+        ).build()
     }
 
     @Test
-    fun createContent() {
-        /* Given */
-        val contentId = 2L
-        val creatorId = 5L
-        whenever(contentRepository.save(any<Content>())).thenReturn(Content(id = contentId))
-        whenever(creatorRepository.findById(5)).thenReturn(Optional.of(Creator(id = creatorId)))
+    fun getContent() {
+        Mockito
+            .`when`(contentService.getContent(1L))
+            .thenReturn((ContentDto(1L)))
 
-        /* When */
-        val result = contentService.createContent(ContentDto(creatorId = creatorId))
-
-        /* Then */
-        assertEquals(contentId, result)
+        mockMvc.perform(MockMvcRequestBuilders.get("/content/2")).andExpect(MockMvcResultMatchers.status().isOk)
     }
 
     @Test
-    fun updateContent() {
-        /* Given */
-        val contentId = 1L;
-        val content = Content(id = contentId)
-        whenever(contentRepository.findById(contentId)).thenReturn(Optional.of(content))
+    fun getContents() {
+        Mockito
+            .`when`(contentService.getContents(PaginationDto()))
+            .thenReturn(PageDto(listOf(ContentDto(1L)), 1, 1))
 
-        /* When */
-        contentService.updateContent(contentId, ContentDto())
-
-        /* Then */
-        verify(contentRepository).findById(contentId)
+        mockMvc.perform(MockMvcRequestBuilders.get("/content")).andExpect(MockMvcResultMatchers.status().isOk)
     }
 }

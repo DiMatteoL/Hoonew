@@ -5,37 +5,33 @@ import fr.hoonew.server.service.dto.ContentDto
 import fr.hoonew.server.service.dto.common.PageDto
 import fr.hoonew.server.service.dto.common.PaginationDto
 import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.stereotype.Component
-import javax.ws.rs.*
-import javax.ws.rs.core.MediaType
+import org.springframework.web.bind.annotation.*
+import javax.ws.rs.BeanParam
+import javax.ws.rs.PathParam
 
 /**
  * Rest endpoint for Contents.
  */
-@Path("/content")
-@Consumes(MediaType.APPLICATION_JSON)
-@Produces(MediaType.APPLICATION_JSON)
-@Component
+@RestController
+@RequestMapping("/content")
+@ResponseBody
 class ContentController {
 
     @Autowired
     private lateinit var contentService: ContentService
 
-    @GET
-    @Path("/{id}")
+    @GetMapping("/{id}")
     fun getContent(@PathParam("id") id: Long) = contentService.getContent(id)
 
-    @GET
+    @GetMapping
     fun getContents(@BeanParam pagination: PaginationDto): PageDto<ContentDto> = contentService.getContents(pagination)
 
-    @POST
+    @PostMapping
     fun createContent(dto: ContentDto): Long? = contentService.createContent(dto)
 
-    @POST
-    @Path("/{id}")
+    @PutMapping
     fun updateContent(@PathParam("id") id: Long, dto: ContentDto) = contentService.updateContent(id, dto)
 
-    @DELETE
-    @Path("/{id}")
+    @DeleteMapping
     fun deleteContent(@PathParam("id") id: Long) = contentService.deleteContent(id)
 }
