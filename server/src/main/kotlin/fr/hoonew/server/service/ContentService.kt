@@ -26,7 +26,7 @@ class ContentService {
         contentRepository.findById(id)
             .map { ContentDtoConverter.convert(it) }
             .orElse(null)
-            ?: throw NotFoundException("Content $id doesn't exist")
+            ?: throw NotFoundException("Content id: $id doesn't exist")
 
     @Transactional(readOnly = true)
     fun getContents(pagination: PaginationDto): PageDto<ContentDto> {
@@ -39,7 +39,7 @@ class ContentService {
         // If creator id is null throw exception.
         val creatorId = dto.creatorId ?: throw BadRequestException("Author id must not be null")
         // Find creator in database and throw exception if it does not exist.
-        val creator = creatorRepository.findById(creatorId).orElse(null)
+        creatorRepository.findById(creatorId).orElse(null)
             ?: throw BadRequestException("Author ${dto.creatorId} does not exist")
 
         // Create content.
