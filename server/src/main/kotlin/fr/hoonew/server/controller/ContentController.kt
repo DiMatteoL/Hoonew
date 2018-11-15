@@ -21,7 +21,7 @@ class ContentController {
     private lateinit var contentService: ContentService
 
     @GetMapping("/{id}")
-    fun getContent(@PathParam("id") id: Long) = contentService.getContent(id)
+    fun getContent(@PathParam("id") id: Long?) = contentService.getContent(id)
 
     @GetMapping
     fun getContents(@BeanParam pagination: PaginationDto): PageDto<ContentDto> = contentService.getContents(pagination)
@@ -30,8 +30,8 @@ class ContentController {
     fun createContent(dto: ContentDto): Long? = contentService.createContent(dto)
 
     @PutMapping
-    fun updateContent(@PathParam("id") id: Long, dto: ContentDto) = contentService.updateContent(id, dto)
+    fun updateContent(@PathParam("id") id: Long?, dto: ContentDto) = contentService.updateContent(id, dto)
 
     @DeleteMapping
-    fun deleteContent(@PathParam("id") id: Long) = contentService.deleteContent(id)
+    fun deleteContent(@PathParam("id") id: Long?) = contentService.deleteContent(id)
 }

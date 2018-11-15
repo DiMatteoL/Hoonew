@@ -45,10 +45,10 @@ class ContentServiceTest {
     }
 
     @Test(expected = NotFoundException::class)
-    fun testGetContentWhenContentIsNotFound() {
+    fun testGetContentIsNotFound() {
         /* Given */
-        val contentId = 2L
-        whenever(contentRepository.findById(contentId)).thenReturn(Optional.empty())
+        val contentId : Long? = 2L
+        whenever(contentRepository.findById(contentId!!)).thenReturn(Optional.empty())
 
         /* When */
         contentService.getContent(contentId)

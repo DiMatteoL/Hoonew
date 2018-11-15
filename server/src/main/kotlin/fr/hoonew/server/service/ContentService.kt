@@ -22,8 +22,9 @@ class ContentService {
     private lateinit var creatorRepository : CreatorRepository
 
     @Transactional(readOnly = true)
-    fun getContent(id: Long) : ContentDto {
-        return contentRepository.findById(id)
+    fun getContent(id: Long?) : ContentDto {
+        val contentId = id ?: throw BadRequestException("id must not be null")
+        return contentRepository.findById(contentId)
             .map { ContentDtoConverter.convert(it) }
             .orElse(null)
             ?: throw NotFoundException("Content id: $id doesn't exist")
@@ -37,8 +38,7 @@ class ContentService {
 
     @Transactional
     fun createContent(dto: ContentDto): Long? {
-        // If creator id is null throw exception.
-        val creatorId = dto.creatorId ?: throw BadRequestException("Author id must not be null")
+        val creatorId = dto.creatorId ?: throw BadRequestException("id must not be null")
         // Find creator in database and throw exception if it does not exist.
         creatorRepository.findById(creatorId).orElse(null)
             ?: throw BadRequestException("Author ${dto.creatorId} does not exist")
@@ -50,9 +50,10 @@ class ContentService {
     }
 
     @Transactional
-    fun updateContent(id: Long, dto: ContentDto) {
-        // Look for content in database and throw exception if it was not found.
-        val content = contentRepository.findById(id).orElse(null)
+    fun updateContent(id: Long?, dto: ContentDto) {
+        val contentId = id ?: throw BadRequestException("id must not be null")
+
+        val content = contentRepository.findById(contentId).orElse(null)
             ?: throw NotFoundException()
 
         // TODO Revert (DTO)
@@ -68,8 +69,10 @@ class ContentService {
     }
 
     @Transactional
-    fun deleteContent(id: Long) {
-        val content = contentRepository.findById(id).orElse(null) ?: throw NotFoundException()
+    fun deleteContent(id: Long?) {
+        val contentId = id ?: throw BadRequestException("id must not be null")
+
+        val content = contentRepository.findById(contentId).orElse(null) ?: throw NotFoundException()
         contentRepository.delete(content)
     }
 }
