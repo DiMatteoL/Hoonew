@@ -1,9 +1,5 @@
 package fr.hoonew.server.service
 
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.mockito.InjectMocks
-import org.mockito.Mock
 import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
@@ -13,6 +9,10 @@ import fr.hoonew.server.repository.ContentRepository
 import fr.hoonew.server.repository.CreatorRepository
 import fr.hoonew.server.service.dto.ContentDto
 import org.junit.Assert.assertEquals
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.mockito.InjectMocks
+import org.mockito.Mock
 import org.springframework.test.context.junit4.SpringRunner
 import java.util.Optional
 import javax.ws.rs.BadRequestException
@@ -83,12 +83,12 @@ class ContentServiceTest {
     @Test
     fun updateContent() {
         /* Given */
-        val contentId = 1L;
+        val contentId = 1L
         val content = Content(id = contentId)
         whenever(contentRepository.findById(contentId)).thenReturn(Optional.of(content))
 
         /* When */
-        contentService.updateContent(contentId, ContentDto())
+        contentService.updateContent(ContentDto(id = contentId))
 
         /* Then */
         verify(contentRepository).findById(contentId)

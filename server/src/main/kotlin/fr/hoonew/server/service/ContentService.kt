@@ -1,6 +1,5 @@
 package fr.hoonew.server.service
 
-import fr.hoonew.server.model.Content
 import fr.hoonew.server.repository.ContentRepository
 import fr.hoonew.server.repository.CreatorRepository
 import fr.hoonew.server.service.dto.ContentDto
@@ -23,7 +22,7 @@ class ContentService {
 
     @Transactional(readOnly = true)
     fun getContent(id: Long?) : ContentDto {
-        val contentId = id ?: throw BadRequestException("id must not be null")
+        val contentId = id ?: throw BadRequestException("Content id must not be null")
         return contentRepository.findById(contentId)
             .map { ContentDtoConverter.convert(it) }
             .orElse(null)
@@ -38,25 +37,25 @@ class ContentService {
 
     @Transactional
     fun createContent(dto: ContentDto): Long? {
-        val creatorId = dto.creatorId ?: throw BadRequestException("id must not be null")
+        val creatorId = dto.creatorId ?: throw BadRequestException("Author id must not be null")
         // Find creator in database and throw exception if it does not exist.
-        creatorRepository.findById(creatorId).orElse(null)
+        val creator = creatorRepository.findById(creatorId).orElse(null)
             ?: throw BadRequestException("Author ${dto.creatorId} does not exist")
 
         // Create content.
-        val content = Content()
-        // TODO Revert (DTO)
+        val content = ContentDtoConverter.revert(dto)
+        content.creator = creator
         return contentRepository.save(content).id
     }
 
     @Transactional
-    fun updateContent(id: Long?, dto: ContentDto) {
-        val contentId = id ?: throw BadRequestException("id must not be null")
+    fun updateContent(dto: ContentDto) {
+        val contentId = dto.id ?: throw BadRequestException("Content id must not be null")
 
-        val content = contentRepository.findById(contentId).orElse(null)
+        contentRepository.findById(contentId).orElse(null)
             ?: throw NotFoundException()
 
-        // TODO Revert (DTO)
+        val content = ContentDtoConverter.revert(dto)
 
         // Update creator if it was changed.
         if(dto.creatorId != null && dto.creatorId == content.creator?.id) {
@@ -64,15 +63,15 @@ class ContentService {
                 ?: throw BadRequestException()
             content.creator = creator
         }
-
         contentRepository.save(content)
     }
 
     @Transactional
     fun deleteContent(id: Long?) {
-        val contentId = id ?: throw BadRequestException("id must not be null")
+        val contentId = id ?: throw BadRequestException("Content id must not be null")
 
         val content = contentRepository.findById(contentId).orElse(null) ?: throw NotFoundException()
+
         contentRepository.delete(content)
     }
 }

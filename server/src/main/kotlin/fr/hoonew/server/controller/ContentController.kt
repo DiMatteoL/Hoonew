@@ -30,7 +30,7 @@ class ContentController {
     fun createContent(dto: ContentDto): Long? = contentService.createContent(dto)
 
     @PutMapping
-    fun updateContent(@PathParam("id") id: Long?, dto: ContentDto) = contentService.updateContent(id, dto)
+    fun updateContent(dto: ContentDto) = contentService.updateContent(dto)
 
     @DeleteMapping
     fun deleteContent(@PathParam("id") id: Long?) = contentService.deleteContent(id)

@@ -26,4 +26,16 @@ interface DtoConverter<DATA, DTO> {
      * @param page page to convert.
      */
     fun convert(page: Page<DATA>): PageDto<DTO> = PageDto(convert(page.content), page.totalPages, page.totalElements)
+
+    /**
+     * Convert dto to entity.
+     * @param dto DTO to convert.
+     */
+    fun revert(dto: DTO): DATA
+
+    /**
+     * Convert list of dtos to list of entities.
+     * @param dtos DTO list to convert.
+     */
+    fun revert(dtos: List<DTO>): List<DATA> = dtos.map { revert(it) }
 }
